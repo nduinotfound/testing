@@ -12,7 +12,6 @@ class BarangController extends Controller
      */
     public function index()
     {
-        // Menampilkan daftar barang dengan pagination
         $barangs = Barang::paginate(10);
         return view('index', compact('barangs'));
     }
@@ -22,7 +21,6 @@ class BarangController extends Controller
      */
     public function create()
     {
-        // Menampilkan form untuk menambah barang baru
         return view('create');
     }
 
@@ -31,7 +29,6 @@ class BarangController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi input
         $request->validate([
             'nama_barang' => 'required',
             'kode_barang' => 'required|unique:barangs,kode_barang',
@@ -42,11 +39,9 @@ class BarangController extends Controller
             'tanggal_masuk' => 'required|date',
         ]);
 
-        // Membuat barang baru
         Barang::create($request->all());
 
-        // Redirect dengan pesan sukses
-        return redirect()->route('index')->with('success', 'Barang berhasil ditambahkan!');
+        return redirect()->route('barang.index')->with('success', 'Barang berhasil ditambahkan!');
     }
 
     /**
@@ -54,7 +49,6 @@ class BarangController extends Controller
      */
     public function show(Barang $barang)
     {
-        // Menampilkan detail barang
         return view('show', compact('barang'));
     }
 
@@ -63,7 +57,6 @@ class BarangController extends Controller
      */
     public function edit(Barang $barang)
     {
-        // Menampilkan form untuk mengedit barang
         return view('edit', compact('barang'));
     }
 
@@ -72,7 +65,6 @@ class BarangController extends Controller
      */
     public function update(Request $request, Barang $barang)
     {
-        // Validasi input
         $request->validate([
             'nama_barang' => 'required',
             'kode_barang' => 'required|unique:barangs,kode_barang,' . $barang->id,
@@ -83,11 +75,9 @@ class BarangController extends Controller
             'tanggal_masuk' => 'required|date',
         ]);
 
-        // Update data barang
         $barang->update($request->all());
 
-        // Redirect dengan pesan sukses
-        return redirect()->route('index')->with('success', 'Barang berhasil diupdate!');
+        return redirect()->route('barang.index')->with('success', 'Barang berhasil diupdate!');
     }
 
     /**
@@ -95,14 +85,10 @@ class BarangController extends Controller
      */
     public function destroy($id)
     {
-        // Menemukan barang berdasarkan ID
         $barang = Barang::findOrFail($id);
-
-        // Soft delete barang
         $barang->delete();
 
-        // Redirect dengan pesan sukses
-        return redirect()->route('index')->with('success', 'Barang berhasil dihapus.');
+        return redirect()->route('barang.index')->with('success', 'Barang berhasil dihapus.');
     }
 
     /**
@@ -110,10 +96,7 @@ class BarangController extends Controller
      */
     public function trashed()
     {
-        // Mengambil barang yang sudah dihapus secara soft delete
         $barangs = Barang::onlyTrashed()->paginate(10);
-
-        // Menampilkan data barang yang dihapus
         return view('trashed', compact('barangs'));
     }
 
@@ -122,13 +105,9 @@ class BarangController extends Controller
      */
     public function restore($id)
     {
-        // Menemukan barang yang dihapus (soft deleted) berdasarkan ID
         $barang = Barang::onlyTrashed()->findOrFail($id);
-
-        // Mengembalikan barang yang dihapus
         $barang->restore();
 
-        // Redirect dengan pesan sukses
-        return redirect()->route('trashed')->with('success', 'Barang berhasil direstore!');
+        return redirect()->route('barang.trashed')->with('success', 'Barang berhasil direstore!');
     }
 }
